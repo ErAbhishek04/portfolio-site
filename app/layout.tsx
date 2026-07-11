@@ -5,20 +5,25 @@ import { Metadata } from "next";
 import { Analytics } from "./components/analytics";
 
 export const metadata: Metadata = {
+  metadataBase: new URL(
+    process.env.NODE_ENV === "development"
+      ? "http://localhost:3000"
+      : "https://your-future-domain.com"
+  ),
   title: {
-    default: "chronark.com",
-    template: "%s | chronark.com",
+    default: "Abhishek Takawane | Associate Data Scientist",
+    template: "%s | Abhishek Takawane",
   },
-  description: "Co-founder of unkey.com",
+  description: "Portfolio showcasing scalable data pipelines and ML model integrations.",
   openGraph: {
-    title: "chronark.com",
+    title: "Abhishek Takawane",
     description:
-      "Co-founder of unkey.com",
-    url: "https://chronark.com",
-    siteName: "chronark.com",
+      "Portfolio showcasing scalable data pipelines and ML model integrations.",
+    url: "https://your-future-domain.com",
+    siteName: "Abhishek Takawane",
     images: [
       {
-        url: "https://chronark.com/og.png",
+        url: "https://your-future-domain.com/og.png",
         width: 1920,
         height: 1080,
       },
@@ -38,13 +43,14 @@ export const metadata: Metadata = {
     },
   },
   twitter: {
-    title: "Chronark",
+    title: "Abhishek Takawane",
     card: "summary_large_image",
   },
   icons: {
     shortcut: "/favicon.png",
   },
 };
+
 const inter = Inter({
   subsets: ["latin"],
   variable: "--font-inter",
@@ -66,8 +72,9 @@ export default function RootLayout({
         <Analytics />
       </head>
       <body
-        className={`bg-black ${process.env.NODE_ENV === "development" ? "debug-screens" : undefined
-          }`}
+        className={`bg-black ${
+          process.env.NODE_ENV === "development" ? "debug-screens" : undefined
+        }`}
       >
         {children}
       </body>

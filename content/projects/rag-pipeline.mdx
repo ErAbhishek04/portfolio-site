@@ -1,0 +1,13 @@
+---
+title: Concurrent PDF RAG Pipeline
+description: Built a RAG pipeline using Llama 3 and FAISS vector store with concurrent PDF ingestion and embedding-based retrieval.
+date: "2025-05-01"
+published: true
+---
+
+### TechStack
+*Python, AWS, RAG, FastAPI, FAISS, Llama 3, OllamaEmbeddings*
+
+Built a Retrieval-Augmented Generation (RAG) pipeline using Llama 3 and a FAISS vector store[cite: 17]. The system features concurrent PDF ingestion, recursive chunking, and embedding-based retrieval using OllamaEmbeddings[cite: 17]. 
+
+Additionally, the pipeline leverages AWS S3 versioning to track and analyze incremental daily records[cite: 18]. This allows for the identification of structural and semantic drift across dataset versions to surface actionable insights from evolving data[cite: 18].
