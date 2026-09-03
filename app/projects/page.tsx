@@ -10,18 +10,21 @@ import { Eye } from "lucide-react";
 export const dynamic = "force-dynamic";
 
 export default async function ProjectsPage() {
-  const redis = Redis.fromEnv();
-  
   let views: Record<string, number> = {};
 
-  if (allProjects.length > 0) {
-    const keys = allProjects.map((p) => ["pageviews", "projects", p.slug].join(":"));
-    const results = await redis.mget<(number | null)[]>(...keys);
-    
-    views = results.reduce((acc, v, i) => {
-      acc[allProjects[i].slug] = v ?? 0;
-      return acc;
-    }, {} as Record<string, number>);
+  if (allProjects.length > 0 && process.env.UPSTASH_REDIS_REST_URL && process.env.UPSTASH_REDIS_REST_TOKEN) {
+    try {
+      const redis = Redis.fromEnv();
+      const keys = allProjects.map((p) => ["pageviews", "projects", p.slug].join(":"));
+      const results = await redis.mget<(number | null)[]>(...keys);
+
+      views = results.reduce((acc, v, i) => {
+        acc[allProjects[i].slug] = v ?? 0;
+        return acc;
+      }, {} as Record<string, number>);
+    } catch {
+      // Pageview analytics should not prevent the portfolio from rendering.
+    }
   }
 
   // 1. Sort ALL projects first

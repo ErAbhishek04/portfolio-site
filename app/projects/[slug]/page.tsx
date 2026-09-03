@@ -22,9 +22,16 @@ export default async function PostPage({ params }: Props) {
     notFound();
   }
 
-  const redis = Redis.fromEnv();
-  const views =
-    (await redis.get<number>(["pageviews", "projects", slug].join(":"))) ?? 0;
+  let views = 0;
+  if (process.env.UPSTASH_REDIS_REST_URL && process.env.UPSTASH_REDIS_REST_TOKEN) {
+    try {
+      const redis = Redis.fromEnv();
+      views =
+        (await redis.get<number>(["pageviews", "projects", slug].join(":"))) ?? 0;
+    } catch {
+      // Pageview analytics should not prevent the project page from rendering.
+    }
+  }
 
   return (
     <div className="bg-zinc-50 min-h-screen">
