@@ -4,7 +4,7 @@ import { allProjects } from "contentlayer/generated";
 import { Navigation } from "../components/nav";
 import { Card } from "../components/card";
 import { Article } from "./article";
-import { Redis } from "@upstash/redis";
+import { getRedisClient } from "@/util/redis";
 import { Eye } from "lucide-react";
 
 export const dynamic = "force-dynamic";
@@ -12,9 +12,9 @@ export const dynamic = "force-dynamic";
 export default async function ProjectsPage() {
   let views: Record<string, number> = {};
 
-  if (allProjects.length > 0 && process.env.UPSTASH_REDIS_REST_URL && process.env.UPSTASH_REDIS_REST_TOKEN) {
+  if (allProjects.length > 0) {
     try {
-      const redis = Redis.fromEnv();
+      const redis = getRedisClient();
       const keys = allProjects.map((p) => ["pageviews", "projects", p.slug].join(":"));
       const results = await redis.mget<(number | null)[]>(...keys);
 

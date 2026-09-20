@@ -1,0 +1,6 @@
+{
+  "name": "Abhishek Takawane Portfolio",
+  "description": "Portfolio showcasing scalable data pipelines and ML model integrations.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

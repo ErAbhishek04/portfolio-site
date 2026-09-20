@@ -45,7 +45,7 @@ const Project = defineDocumentType(() => ({
   computedFields,
 }));
 
-module.exports = makeSource({
+export default makeSource({
   contentDirPath: "content",
   documentTypes: [Project],
   mdx: {

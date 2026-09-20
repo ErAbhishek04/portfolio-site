@@ -2,11 +2,17 @@
   "linter": {
     "enabled": true,
     "rules": {
-      "recommended": true
+      "recommended": true,
+      "suspicious": {
+        "noExplicitAny": "off"
+      },
+      "a11y": {
+        "useAltText": "off"
+      }
     },
-    "ignore": ["node_modules", ".next", "dist"]
+    "ignore": ["node_modules", ".next", "dist", ".contentlayer"]
   },
   "formatter": {
-    "ignore": ["node_modules", ".next", "dist"]
+    "ignore": ["node_modules", ".next", "dist", ".contentlayer"]
   }
 }

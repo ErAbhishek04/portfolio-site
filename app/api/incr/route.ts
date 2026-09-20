@@ -1,37 +1,32 @@
-import { Redis } from "@upstash/redis";
 import { NextRequest, NextResponse } from "next/server";
+import { getRedisClient } from "@/util/redis";
 
-export const config = {
-  runtime: "edge",
-};
+export async function POST(req: NextRequest): Promise<NextResponse> {
+  const redis = getRedisClient();
 
-export default async function incr(req: NextRequest): Promise<NextResponse> {
-  if (!process.env.UPSTASH_REDIS_REST_URL || !process.env.UPSTASH_REDIS_REST_TOKEN) {
-    return new NextResponse("analytics unavailable", { status: 503 });
-  }
-
-  const redis = Redis.fromEnv();
-  if (req.method !== "POST") {
-    return new NextResponse("use POST", { status: 405 });
-  }
-  if (req.headers.get("Content-Type") !== "application/json") {
+  const contentType = req.headers.get("Content-Type");
+  if (!contentType || !contentType.includes("application/json")) {
     return new NextResponse("must be json", { status: 400 });
   }
 
-  const body = await req.json();
-  let slug: string | undefined = undefined;
-  if ("slug" in body) {
-    slug = body.slug;
+  let body: any;
+  try {
+    body = await req.json();
+  } catch {
+    return new NextResponse("invalid json", { status: 400 });
   }
+
+  const slug = body?.slug;
   if (!slug) {
     return new NextResponse("Slug not found", { status: 400 });
   }
-  const ip = req.ip;
+
+  const ip = req.ip ?? req.headers.get("x-forwarded-for");
   if (ip) {
     // Hash the IP in order to not store it directly in your db.
     const buf = await crypto.subtle.digest(
       "SHA-256",
-      new TextEncoder().encode(ip),
+      new TextEncoder().encode(ip)
     );
     const hash = Array.from(new Uint8Array(buf))
       .map((b) => b.toString(16).padStart(2, "0"))
@@ -43,9 +38,10 @@ export default async function incr(req: NextRequest): Promise<NextResponse> {
       ex: 24 * 60 * 60,
     });
     if (!isNew) {
-      new NextResponse(null, { status: 202 });
+      return new NextResponse(null, { status: 202 });
     }
   }
+
   await redis.incr(["pageviews", "projects", slug].join(":"));
   return new NextResponse(null, { status: 202 });
 }

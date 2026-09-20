@@ -4,7 +4,7 @@ import { Mdx } from "@/app/components/mdx";
 import { Header } from "./header";
 import "./mdx.css";
 import { ReportView } from "./view";
-import { Redis } from "@upstash/redis";
+import { getRedisClient } from "@/util/redis";
 
 export const dynamic = "force-dynamic";
 
@@ -23,14 +23,12 @@ export default async function PostPage({ params }: Props) {
   }
 
   let views = 0;
-  if (process.env.UPSTASH_REDIS_REST_URL && process.env.UPSTASH_REDIS_REST_TOKEN) {
-    try {
-      const redis = Redis.fromEnv();
-      views =
-        (await redis.get<number>(["pageviews", "projects", slug].join(":"))) ?? 0;
-    } catch {
-      // Pageview analytics should not prevent the project page from rendering.
-    }
+  try {
+    const redis = getRedisClient();
+    views =
+      (await redis.get<number>(["pageviews", "projects", slug].join(":"))) ?? 0;
+  } catch {
+    // Pageview analytics should not prevent the project page from rendering.
   }
 
   return (
